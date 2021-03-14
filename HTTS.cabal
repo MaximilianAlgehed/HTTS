@@ -27,8 +27,10 @@ source-repository head
 
 library
   exposed-modules:
-      QQ
+      Documents
+    , QQ
     , DocPrelude
+    , Utils
   other-modules:
     Paths_HTTS
   hs-source-dirs:
@@ -38,6 +40,7 @@ library
     , template-haskell
     , text
     , haskell-src-meta
+    , haskell-src-exts
   default-language: Haskell2010
 
 test-suite HTTS-test
