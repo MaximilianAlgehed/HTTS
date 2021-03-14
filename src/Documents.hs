@@ -54,4 +54,27 @@ instance IsString Doc where
         chunks = splitOn (==[]) cleanedUp
     in Doc $ intersperse BParbreak [ BText $ unwords s | (_, s) <- chunks ]
 
--- TODO: Implement actually executing the action in an environment.
+executeEnvironments :: Doc -> Doc
+executeEnvironments (Doc bs) = Doc (go bs)
+  where
+    go [] = []
+    go (BBegin env : bs)
+      | topDown env =
+        let Doc bs' = (execute env $ Doc (findBlockPrefix bs))
+        in go (bs' ++ findBlockSuffix bs)
+      | otherwise =
+        let Doc bs' = execute env (Doc $ (go $ findBlockPrefix bs) ++ [BEnd])
+        in bs' ++ go (findBlockSuffix bs) 
+    go (b : bs) = b : go bs
+
+findBlockPrefix :: [Block] -> [Block]
+findBlockPrefix bs = go 0 bs
+  where
+    go 0 [] = []
+    go 0 (BEnd : _) = []
+    go n (BEnd : bs) = BEnd : go (n-1) bs
+    go n (BBegin e : bs) = BBegin e : go (n+1) bs
+    go n (b:bs) = b : go n bs
+
+findBlockSuffix :: [Block] -> [Block]
+findBlockSuffix bs = drop (length (findBlockPrefix bs) + 1) bs

@@ -58,11 +58,13 @@ enum = Env { name    = "enum"
   where
     phase1 n [] = []
     phase1 n (b@(BBegin env) : bs)
-      | fromDynamic (envMark b) == EnumMark = b : phase1 (n+1) bs
+      | fromDynamic (envMark env) == Just EnumMark = b : phase1 (n+1) bs
       | otherwise = b : phase1 n bs
     phase1 n (b@(BMark m) : bs) = case fromDynamic m of
-      Just (EitemMark k) -> mark (EitemMark (n+k)) : phase1 n bs
+      Just (EitemMark k) -> BMark (toDyn $ EitemMark (n+k)) : phase1 n bs
       Nothing -> b : phase1 n bs
+    phase1 n (BEnd : bs) = BEnd : phase1 (n-1) bs
+    phase1 n (b : bs) = b : phase1 n bs
 
     phase2 nesting number [] = []
     phase2 nesting number (b@(BBegin env) : bs) = b : phase2 (nesting+1) number bs
@@ -73,4 +75,4 @@ enum = Env { name    = "enum"
       Nothing -> b : phase2 0 number bs
     phase2 nesting number (b : bs) = b : phase2 nesting number bs
 
-    execute (Doc bs) = Doc $ phase2 0 0 (phase 1 0 bs)
+    execute (Doc bs) = Doc $ phase2 0 0 (phase1 0 bs)
