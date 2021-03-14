@@ -16,6 +16,7 @@ import Utils
 -- * Document Structure (Headings, Paragraphs, etc. etc.) it is debatable
 --   whether or not it would be a good idea to have this be a native abstraction
 --   in the Doc type instead (cf. the comment in QQ.hs).
+-- * Counters (like for theorems, sections, etc.)
 
 -- Itemized lists as a library
 data ListMarks = ListMark | ItemMark
@@ -55,23 +56,23 @@ enum = Env { name    = "enum"
            , envMark = toDyn EnumMark
            }
   where
-    phase1 n [] = []
-    phase1 n (b@(BBegin env) : bs)
-      | fromDynamic (envMark env) == Just EnumMark = b : phase1 (n+1) bs
-      | otherwise = b : phase1 n bs
-    phase1 n (b@(BMark m) : bs) = case fromDynamic m of
-      Just (EitemMark k) -> BMark (toDyn $ EitemMark (n+k)) : phase1 n bs
-      Nothing -> b : phase1 n bs
-    phase1 n (BEnd : bs) = BEnd : phase1 (n-1) bs
-    phase1 n (b : bs) = b : phase1 n bs
+    prep n [] = []
+    prep n (b@(BBegin env) : bs)
+      | fromDynamic (envMark env) == Just EnumMark = b : prep (n+1) bs
+      | otherwise = b : prep n bs
+    prep n (b@(BMark m) : bs) = case fromDynamic m of
+      Just (EitemMark k) -> BMark (toDyn $ EitemMark (n+k)) : prep n bs
+      Nothing -> b : prep n bs
+    prep n (BEnd : bs) = BEnd : prep (n-1) bs
+    prep n (b : bs) = b : prep n bs
 
-    phase2 nesting number [] = []
-    phase2 nesting number (b@(BBegin env) : bs) = b : phase2 (nesting+1) number bs
-    phase2 0 number (BEnd : bs) = BEnd : bs
-    phase2 nesting number (BEnd : bs) = BEnd : phase2 (nesting - 1) number bs
-    phase2 0 number (b@(BMark m) : bs) = case fromDynamic m of
-      Just (EitemMark k) -> BNewline : BText (show k ++ "." ++ show number ++") ") : phase2 0 (number + 1) bs
-      Nothing -> b : phase2 0 number bs
-    phase2 nesting number (b : bs) = b : phase2 nesting number bs
+    go nesting number [] = []
+    go nesting number (b@(BBegin env) : bs) = b : go (nesting+1) number bs
+    go 0 number (BEnd : bs) = BEnd : bs
+    go nesting number (BEnd : bs) = BEnd : go (nesting - 1) number bs
+    go 0 number (b@(BMark m) : bs) = case fromDynamic m of
+      Just (EitemMark k) -> BNewline : BText (show k ++ "." ++ show number ++") ") : go 0 (number + 1) bs
+      Nothing -> b : go 0 number bs
+    go nesting number (b : bs) = b : go nesting number bs
 
-    execute (Doc bs) = Doc $ phase2 0 0 (phase1 0 bs)
+    execute (Doc bs) = Doc $ go 0 0 (prep 0 bs)

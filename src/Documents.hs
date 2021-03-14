@@ -52,6 +52,9 @@ begin env = Doc [BBegin env]
 end :: Doc
 end = Doc [BEnd]
 
+newline :: Doc
+newline = Doc [BNewline]
+
 instance IsString Doc where
   fromString s =
     let ls = lines s
