@@ -53,3 +53,5 @@ instance IsString Doc where
         cleanedUp = map (dropWhile isSpace) ls
         chunks = splitOn (==[]) cleanedUp
     in Doc $ intersperse BParbreak [ BText $ unwords s | (_, s) <- chunks ]
+
+-- TODO: Implement actually executing the action in an environment.
