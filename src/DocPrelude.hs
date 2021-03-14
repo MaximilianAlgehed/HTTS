@@ -33,10 +33,9 @@ list = Env { name    = "list"
   where
     go nesting [] = []
     go nesting (b@(BBegin env) : bs) = b : go (nesting+1) bs
-    go 0 (BEnd : bs) = BEnd : bs
     go nesting (BEnd : bs) = BEnd : go (nesting - 1) bs
     go 0 (b : bs)
-      | b =? ItemMark = BText "* " : go 0 bs
+      | b =? ItemMark = BNewline : BText "* " : go 0 bs
       | otherwise     = b : go 0 bs
     go nesting (b : bs) = b : go nesting bs
 
@@ -71,7 +70,7 @@ enum = Env { name    = "enum"
     phase2 0 number (BEnd : bs) = BEnd : bs
     phase2 nesting number (BEnd : bs) = BEnd : phase2 (nesting - 1) number bs
     phase2 0 number (b@(BMark m) : bs) = case fromDynamic m of
-      Just (EitemMark k) -> BText (show k ++ "." ++ show number ++") ") : phase2 0 (number + 1) bs
+      Just (EitemMark k) -> BNewline : BText (show k ++ "." ++ show number ++") ") : phase2 0 (number + 1) bs
       Nothing -> b : phase2 0 number bs
     phase2 nesting number (b : bs) = b : phase2 nesting number bs
 

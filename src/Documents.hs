@@ -1,6 +1,10 @@
 {-# LANGUAGE ConstraintKinds, GADTs #-}
 module Documents where
 
+-- TODO: Come up with a nice interface to this module
+-- that forces you to write cleaner code in the DocPrelude
+-- and subsequent libraries.
+
 import Data.Dynamic
 import Data.String
 import Data.List
@@ -24,6 +28,7 @@ data Block where
   BMark  :: Dynamic -> Block
   BText  :: String -> Block
   BParbreak :: Block
+  BNewline :: Block
   deriving Show
 
 (=?) :: Mark m => Block -> m -> Bool
