@@ -5,7 +5,11 @@ import qualified Language.Haskell.TH as TH
 import Language.Haskell.TH.Quote
 import Language.Haskell.Meta.Parse
 import Data.String
+import Data.Char
 
+-- TOOD:
+-- Go from this to a representation with slightly more structure
+-- (a la John's papers)
 data Doc = DEmpty
          | DText String 
          | Doc :<>: Doc 
@@ -35,7 +39,9 @@ splitter s = quote s ""
 
     splice "" "" _ = []
     splice "" str _ = [Splice $ reverse str]
-    splice (' ':s) str 0 = Splice (reverse str) : quote (' ':s) ""
+    splice (c:s) str 0
+      | isAlphaNum c = splice s (c:str) 0
+      | otherwise    = Splice (reverse str) : quote (c:s) ""
     splice ('(':s) str n = splice s ('(':str) (n+1)
     splice (')':s) str 1 = Splice (reverse (')':str)) : quote s ""
     splice (')':s) str n = splice s (')':str) (n-1)
@@ -51,4 +57,8 @@ parseString s = go (splitter s)
                               Right exp    -> [| $(return exp) <> $(go spls) |]
 
 doc :: QuasiQuoter
-doc = QuasiQuoter { quoteExp = parseString }
+doc = QuasiQuoter { quoteExp  = parseString
+                  , quotePat  = error "This is not a pattern quoter"
+                  , quoteType = error "This is not a type quoter"
+                  , quoteDec  = error "This is not a declaration quoter"
+                  }

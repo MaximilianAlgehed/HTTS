@@ -27,7 +27,8 @@ source-repository head
 
 library
   exposed-modules:
-    QQ
+      QQ
+    , DocPrelude
   other-modules:
     Paths_HTTS
   hs-source-dirs:
