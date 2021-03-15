@@ -19,10 +19,6 @@ import Utils
 -- on top of Docs that can be done with neat embedded DSLs:
 -- * Maths
 -- * Tables
--- * Document Structure (Headings, Paragraphs, etc. etc.) it is debatable
---   whether or not it would be a good idea to have this be a native abstraction
---   in the Doc type instead (cf. the comment in QQ.hs).
--- * Counters (like for theorems, sections, etc.)
 
 -- Itemized lists as a library
 class List a b | b -> a where
@@ -111,3 +107,24 @@ instance TODO () Environment where
                 , topDown = True
                 , envMark = toDyn ()
                 }
+
+-- Sections
+data SectionMarker = SectionMark { secTitle :: String }
+                     deriving (Data, Eq, Show, Typeable)
+
+sections :: () -> Environment
+sections _ = Env { name = "sections"
+                 , execute = execute
+                 , topDown = True
+                 , envMark = toDyn () }
+             where
+                execute (Doc bs) = Doc (go 1 bs)
+
+                go n [] = []
+                go n (b@(BMark m) : bs) = case fromDynamic m of
+                  Just (SectionMark st) -> BText ("# " ++ show n ++ ") " ++ st) : BNewline : go (n+1) bs
+                  Nothing               -> b : go n bs
+                go n (b : bs)           = b : go n bs
+
+section :: String -> Doc
+section = mark . SectionMark

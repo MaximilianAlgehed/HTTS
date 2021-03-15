@@ -43,3 +43,15 @@ todoExample =[doc|
   You might think that what I've written here makes sense.
   $(todo "I don't")
   |]
+
+sectionsExample :: Doc
+sectionsExample = [doc| $(begin sections)
+  $(section "Introduction")
+  In this text we discuss how to get rid of LaTeX once and for all. 
+
+  $(section "Background")
+  TeX is a horrible type setting system.
+
+  $(section "Method")
+  We replace TeX with something even worse, in Haskell.
+  |]

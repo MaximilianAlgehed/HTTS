@@ -7,6 +7,9 @@ module Documents where
 
 -- TODO: Come up with a bunch of QuickCheck properties to explain how this
 -- interface actually works.
+
+-- TODO: Figure out how to give different semantics to documents (i.e. PDFs)
+-- maybe the right choice is to go for 
 import Data.Dynamic
 import Data.String
 import Data.List
