@@ -5,6 +5,8 @@ module Documents where
 -- that forces you to write cleaner code in the DocPrelude
 -- and subsequent libraries.
 
+-- TODO: Come up with a bunch of QuickCheck properties to explain how this
+-- interface actually works.
 import Data.Dynamic
 import Data.String
 import Data.List

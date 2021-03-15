@@ -1,4 +1,8 @@
-{-# LANGUAGE TemplateHaskell, DeriveDataTypeable, OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell
+           , DeriveDataTypeable
+           , OverloadedStrings
+           , FlexibleInstances
+#-}
 module DocPrelude where
 
 import Data.Data
@@ -76,3 +80,16 @@ enum = Env { name    = "enum"
     go nesting number (b : bs) = b : go nesting number bs
 
     execute (Doc bs) = Doc $ go 0 0 (prep 0 bs)
+
+class TODO t where
+  todo :: t
+
+instance TODO (Doc -> Doc) where
+  todo = execute todo 
+
+instance TODO Environment where
+  todo = Env { name = "todo"
+             , execute = \ doc -> "TODO<<<"<>newline<>doc<>newline<>">>>"<>newline
+             , topDown = True
+             , envMark = toDyn ()
+             }

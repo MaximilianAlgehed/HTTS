@@ -37,3 +37,9 @@ enumExample =[doc|
     $eitem With crazy dollar signs
   $end
   |]
+
+todoExample :: Doc
+todoExample =[doc|
+  You might think that what I've written here makes sense.
+  $(todo "I don't")
+  |]
