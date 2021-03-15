@@ -48,8 +48,8 @@ instance Monoid Doc where
 mark :: Mark m => m -> Doc
 mark m = Doc [BMark (toDyn m)]
 
-begin :: Environment -> Doc
-begin env = Doc [BBegin env]
+begin :: (() -> Environment) -> Doc
+begin env = Doc [BBegin $ env ()]
 
 end :: Doc
 end = Doc [BEnd]
