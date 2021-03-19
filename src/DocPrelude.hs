@@ -122,9 +122,9 @@ sections _ = Env { name = "sections"
 
                 go n [] = []
                 go n (b@(BMark m) : bs) = case fromDynamic m of
-                  Just (SectionMark st) -> BText ("# " ++ show n ++ ") " ++ st) : BNewline : go (n+1) bs
+                  Just (SectionMark st) -> BText ("# " ++ show n ++ " " ++ st) : BNewline : go (n+1) bs
                   Nothing               -> b : go n bs
-                go n (b : bs)           = b : go n bs
+                go n (b : bs) = b : go n bs
 
 section :: String -> Doc
 section = mark . SectionMark

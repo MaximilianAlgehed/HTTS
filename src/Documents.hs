@@ -9,7 +9,11 @@ module Documents where
 -- interface actually works.
 
 -- TODO: Figure out how to give different semantics to documents (i.e. PDFs)
--- maybe the right choice is to go for 
+-- maybe the right choice is to go for some universal format that can be converted
+-- to 10 different things? This seems like a hard problem.
+
+-- TODO: Add more types to make sure e.g. that you don't use markers in places where
+-- you shouldn't.
 import Data.Dynamic
 import Data.String
 import Data.List

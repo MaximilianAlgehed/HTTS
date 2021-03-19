@@ -45,7 +45,9 @@ todoExample =[doc|
   |]
 
 sectionsExample :: Doc
-sectionsExample = [doc| $(begin sections)
+sectionsExample = [doc|
+  $(begin sections)
+
   $(section "Introduction")
   In this text we discuss how to get rid of LaTeX once and for all. 
 
