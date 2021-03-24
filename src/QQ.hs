@@ -46,7 +46,12 @@ parseString s = go (splitter s)
     go []                = [| mempty |]
     go ((Quoted s):spls) = [| fromString s <> $(go spls) |]
     go ((Splice s):spls) = case parseExp s of
-      Left failure -> fail failure 
+      Left failure -> do
+        let str = if length s > 10 then
+                    take 10 (show s) ++ "...\""
+                  else
+                    show s 
+        fail $ "Failed to parse splice: " ++ str ++ " with " ++ failure 
       Right exp    -> [| $(return exp) <> $(go spls) |]
 
 doc :: QuasiQuoter
