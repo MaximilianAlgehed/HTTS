@@ -32,12 +32,12 @@ instance Show Environment where
   show env = "Env " ++ show (name env)
 
 data Block where
-  BBegin :: Environment -> Block
-  BEnd   :: Block
-  BMark  :: Dynamic -> Block
-  BText  :: String -> Block
+  BBegin    :: Environment -> Block
+  BEnd      :: Block
+  BMark     :: Dynamic -> Block
+  BText     :: String -> Block
   BParbreak :: Block
-  BNewline :: Block
+  BNewline  :: Block
   deriving Show
 
 (=?) :: Mark m => Block -> m -> Bool
